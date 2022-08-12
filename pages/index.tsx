@@ -5,7 +5,7 @@ import Image from "next/image";
 const Home: NextPage = () => {
   return (
     <>
-      <h1 className='h-screen w-screen flex flex-col justify-center'>
+      <h1 className='h-screen w-screen flex flex-col items-center justify-center'>
         <div className='text-2xl text-center'>Who wins?</div>
         <div className='p-6'></div>
         <div className='border rounded p-6 flex justify-between items-center max-w-2xl'>
