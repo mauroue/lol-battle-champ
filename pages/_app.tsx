@@ -1,8 +1,9 @@
 import "./styles/globals.css";
-
 import { withTRPC } from "@trpc/next";
 import { AppType } from "next/dist/shared/lib/utils";
 import { AppRouter } from "./api/trpc/[trpc]";
+import { noSSR } from "next/dynamic";
+import React from "react";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return <Component {...pageProps} />;
@@ -10,7 +11,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 
 function getBaseUrl() {
   if (typeof window !== "undefined") {
-    return "";
+    return null;
   }
   // reference for vercel.com
   if (process.env.VERCEL_URL) {

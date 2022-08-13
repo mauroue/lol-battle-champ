@@ -1,11 +1,20 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import React from "react";
 import { getVoteOptions } from "../utils/getRandomChamp";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
+  const [hasMounted, setHasMounted] = React.useState(false);
   const [left, right] = getVoteOptions();
+
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) return null;
+
   return (
     <>
       <h1 className='h-screen w-screen flex flex-col items-center justify-center'>
