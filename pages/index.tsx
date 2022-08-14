@@ -5,9 +5,14 @@ import React from "react";
 import { getVoteOptions } from "../utils/getRandomChamp";
 import { trpc } from "../utils/trpc";
 
+const url = "http://ddragon.leagueoflegends.com/cdn/img/champion/loading/";
+
 const Home: NextPage = () => {
   const [hasMounted, setHasMounted] = React.useState(false);
-  const [left, right] = getVoteOptions();
+  const [left, right] = React.useMemo(() => getVoteOptions(), []);
+  const firstChamp = trpc.useQuery(["get-champ-by-id", { id: left }]);
+  const secondChamp = trpc.useQuery(["get-champ-by-id", { id: right }]);
+  console.log(firstChamp.data?.image.full);
 
   React.useEffect(() => {
     setHasMounted(true);
@@ -15,15 +20,23 @@ const Home: NextPage = () => {
 
   if (!hasMounted) return null;
 
+  // if (firstChamp.isLoading && secondChamp.isLoading) return null;
+
   return (
     <>
       <h1 className='h-screen w-screen flex flex-col items-center justify-center'>
         <div className='text-2xl text-center'>Who wins?</div>
         <div className='p-6'></div>
         <div className='border rounded p-6 flex justify-between items-center max-w-2xl'>
-          <div className='bg-red-900 w-32 h-32'>{left}</div>
+          <div className='text-center'>
+            <p>{firstChamp.data?.name}</p>
+            <img src={url + firstChamp.data?.id + "_0.jpg"} alt='' />
+          </div>
           <div className='p-8'>vs</div>
-          <div className='bg-red-900 w-32 h-32'>{right}</div>
+          <div className='text-center'>
+            {secondChamp.data?.name}
+            <img src={url + secondChamp.data?.id + "_0.jpg"} alt='' />
+          </div>
         </div>
       </h1>
     </>
