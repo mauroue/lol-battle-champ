@@ -2,7 +2,11 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import React from "react";
-import { getVoteOptions } from "../utils/getRandomChamp";
+import {
+  getChampionName,
+  getChampionNameCapital,
+} from "twisted/dist/constants";
+import { getRandomChampByName, getVoteOptions } from "../utils/getRandomChamp";
 import { trpc } from "../utils/trpc";
 
 const url = "http://ddragon.leagueoflegends.com/cdn/img/champion/loading/";
@@ -12,7 +16,6 @@ const Home: NextPage = () => {
   const [left, right] = React.useMemo(() => getVoteOptions(), []);
   const firstChamp = trpc.useQuery(["get-champ-by-id", { id: left }]);
   const secondChamp = trpc.useQuery(["get-champ-by-id", { id: right }]);
-  console.log(firstChamp.data?.image.full);
 
   React.useEffect(() => {
     setHasMounted(true);
@@ -20,7 +23,7 @@ const Home: NextPage = () => {
 
   if (!hasMounted) return null;
 
-  // if (firstChamp.isLoading && secondChamp.isLoading) return null;
+  if (firstChamp.isLoading && secondChamp.isLoading) return null;
 
   return (
     <>

@@ -1,15 +1,28 @@
-const MAX_CHAMP_ID = 10;
-
-export const getRandomChamp: (exception?: number) => number = (exception) => {
-  const championNum = Math.floor(Math.random() * MAX_CHAMP_ID + 1);
-
-  if (championNum !== exception) return championNum;
-  return getRandomChamp(exception);
-};
+import { Champions } from "twisted/dist/constants/champions";
 
 export const getVoteOptions = () => {
-  const leftId = getRandomChamp();
-  const rightId = getRandomChamp(leftId);
+  const leftId = getRandomChampByName();
+  const rightId = getRandomChampByName(leftId);
 
   return [leftId, rightId];
+};
+
+export const getRandomChampByName: (exception?: number) => number = (
+  exception?: number
+) => {
+  const data = getListOfChampions();
+  const selectedChamp = data[Math.floor(Math.random() * data.length + 1)];
+
+  if (selectedChamp[1] !== exception) return Number(selectedChamp[1]);
+
+  return getRandomChampByName(Number(selectedChamp[1]));
+};
+
+export const getListOfChampions = () => {
+  const objKeys = Object.entries(Champions);
+  const data = objKeys.filter((value) => {
+    if (typeof value[1] === "number") return true;
+  });
+
+  return data;
 };
