@@ -1,16 +1,31 @@
-import type { NextPage } from "next";
-import DATA from "../utils/data.json";
-import React from "react";
-import { getVoteOptions } from "../utils/getRandomChamp";
-import { trpc } from "../utils/trpc";
+import type { NextPage } from 'next';
+import DATA from '../utils/data.json';
+import React from 'react';
+import { getVoteOptions } from '../utils/getRandomChamp';
+import { trpc } from '../utils/trpc';
 
-const url = "http://ddragon.leagueoflegends.com/cdn/img/champion/loading/";
+const url = 'http://ddragon.leagueoflegends.com/cdn/img/champion/loading/';
 
 const Home: NextPage = () => {
   const [hasMounted, setHasMounted] = React.useState(false);
-  const [left, right] = React.useMemo(() => getVoteOptions(), []);
-  const firstChamp = trpc.useQuery(["get-champ-by-id", { id: left }]);
-  const secondChamp = trpc.useQuery(["get-champ-by-id", { id: right }]);
+  const [ids, setIds] = React.useState(() => getVoteOptions());
+
+  const [first, second] = ids;
+
+  const firstChamp = trpc.useQuery(['get-champ-by-id', { id: first }]);
+  const secondChamp = trpc.useQuery(['get-champ-by-id', { id: second }]);
+
+  const voteMutation = trpc.useMutation(['cast-vote']);
+
+  const voteChamp = (selected: number) => {
+    if (!firstChamp && !secondChamp) return;
+    if (selected === first) {
+      voteMutation.mutate({ votedFor: first, votedAgainst: second });
+    } else {
+      voteMutation.mutate({ votedFor: second, votedAgainst: first });
+    }
+    setIds(getVoteOptions());
+  };
 
   React.useEffect(() => {
     setHasMounted(true);
@@ -22,18 +37,26 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <h1 className='h-screen w-screen flex flex-col items-center justify-center'>
-        <div className='text-2xl text-center'>Who wins?</div>
-        <div className='p-6'></div>
-        <div className='border rounded p-6 flex justify-between items-center max-w-2xl'>
-          <div className='text-center'>
+      <h1 className="h-screen w-screen flex flex-col items-center justify-center">
+        <div className="text-2xl text-center">Who wins?</div>
+        <div className="p-6"></div>
+        <div className="border rounded p-6 flex justify-between items-center max-w-2xl">
+          <div className="text-center">
             <p>{firstChamp.data?.name}</p>
-            <img src={url + firstChamp.data?.alias + "_0.jpg"} alt='' />
+            <img
+              onClick={() => voteChamp(firstChamp.id)}
+              src={url + firstChamp.data?.alias + '_0.jpg'}
+              alt=""
+            />
           </div>
-          <div className='p-8'>vs</div>
-          <div className='text-center'>
+          <div className="p-8">vs</div>
+          <div className="text-center">
             {secondChamp.data?.name}
-            <img src={url + secondChamp.data?.alias + "_0.jpg"} alt='' />
+            <img
+              onClick={() => voteChamp(secondChamp.id)}
+              src={url + secondChamp.data?.alias + '_0.jpg'}
+              alt=""
+            />
           </div>
         </div>
       </h1>
