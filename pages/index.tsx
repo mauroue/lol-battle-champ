@@ -1,12 +1,7 @@
 import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
+import DATA from "../utils/data.json";
 import React from "react";
-import {
-  getChampionName,
-  getChampionNameCapital,
-} from "twisted/dist/constants";
-import { getRandomChampByName, getVoteOptions } from "../utils/getRandomChamp";
+import { getVoteOptions } from "../utils/getRandomChamp";
 import { trpc } from "../utils/trpc";
 
 const url = "http://ddragon.leagueoflegends.com/cdn/img/champion/loading/";
@@ -33,12 +28,12 @@ const Home: NextPage = () => {
         <div className='border rounded p-6 flex justify-between items-center max-w-2xl'>
           <div className='text-center'>
             <p>{firstChamp.data?.name}</p>
-            <img src={url + firstChamp.data?.id + "_0.jpg"} alt='' />
+            <img src={url + firstChamp.data?.alias + "_0.jpg"} alt='' />
           </div>
           <div className='p-8'>vs</div>
           <div className='text-center'>
             {secondChamp.data?.name}
-            <img src={url + secondChamp.data?.id + "_0.jpg"} alt='' />
+            <img src={url + secondChamp.data?.alias + "_0.jpg"} alt='' />
           </div>
         </div>
       </h1>

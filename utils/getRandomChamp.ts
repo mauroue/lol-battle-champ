@@ -1,28 +1,25 @@
-import { Champions } from "twisted/dist/constants/champions";
+import DATA from "./data.json";
 
 export const getVoteOptions = () => {
-  const leftId = getRandomChampByName();
-  const rightId = getRandomChampByName(leftId);
+  const leftId = getRandomChampById();
+  const rightId = getRandomChampById(leftId);
 
   return [leftId, rightId];
 };
 
-export const getRandomChampByName: (exception?: number) => number = (
+export const getRandomChampById: (exception?: number) => number = (
   exception?: number
 ) => {
   const data = getListOfChampions();
   const selectedChamp = data[Math.floor(Math.random() * data.length + 1)];
 
-  if (selectedChamp[1] !== exception) return Number(selectedChamp[1]);
+  if (selectedChamp[1].id !== exception) return selectedChamp[1].id;
 
-  return getRandomChampByName(Number(selectedChamp[1]));
+  return getRandomChampById(Number(selectedChamp[1]));
 };
 
 export const getListOfChampions = () => {
-  const objKeys = Object.entries(Champions);
-  const data = objKeys.filter((value) => {
-    if (typeof value[1] === "number") return true;
-  });
+  const champList = Object.entries(DATA);
 
-  return data;
+  return champList;
 };
