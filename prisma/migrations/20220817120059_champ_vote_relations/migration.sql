@@ -2,6 +2,8 @@
 CREATE TABLE `Vote` (
     `id` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `votedFor` INTEGER NOT NULL,
+    `votedAgainst` INTEGER NOT NULL,
     `votedForId` INTEGER NOT NULL,
     `votedAgainstId` INTEGER NOT NULL,
 
