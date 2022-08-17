@@ -17,8 +17,8 @@ const Home: NextPage = () => {
 
   const voteMutation = trpc.useMutation(['cast-vote']);
 
-  const voteChamp = (selected: number) => {
-    if (!firstChamp && !secondChamp) return;
+  const voteChamp = (selected?: number) => {
+    if (!selected) return;
     if (selected === first) {
       voteMutation.mutate({ votedFor: first, votedAgainst: second });
     } else {
@@ -44,7 +44,7 @@ const Home: NextPage = () => {
           <div className="text-center">
             <p>{firstChamp.data?.name}</p>
             <img
-              onClick={() => voteChamp(firstChamp.id)}
+              onClick={() => voteChamp(firstChamp.data?.id)}
               src={url + firstChamp.data?.alias + '_0.jpg'}
               alt=""
             />
@@ -53,7 +53,7 @@ const Home: NextPage = () => {
           <div className="text-center">
             {secondChamp.data?.name}
             <img
-              onClick={() => voteChamp(secondChamp.id)}
+              onClick={() => voteChamp(secondChamp.data?.id)}
               src={url + secondChamp.data?.alias + '_0.jpg'}
               alt=""
             />
