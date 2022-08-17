@@ -1,22 +1,25 @@
 import * as trpc from '@trpc/server';
 import { z } from 'zod';
+import { getVoteOptions } from '../../utils/getRandomChamp';
 import { prisma } from '../utils/prisma';
 
 export const appRouter = trpc
   .router()
-  .query('get-champ-by-id', {
-    input: z.object({
-      id: z.number()
-    }),
-    async resolve({ input }) {
-      const champion = await prisma.champion.findFirst({
-        where: { id: input.id }
+  .query('get-champ-pair', {
+    async resolve() {
+      const [first, second] = getVoteOptions();
+
+      const bothChampions = await prisma.champion.findMany({
+        where: { id: { in: [first, second] } }
       });
 
-      if (!champion) {
-        throw new Error('champion not found');
-      }
-      return champion;
+      if (bothChampions.length !== 2)
+        throw new Error('Failed to fetch two champions.');
+
+      return {
+        firstChampion: bothChampions[0],
+        secondChampion: bothChampions[1]
+      };
     }
   })
   .mutation('cast-vote', {
@@ -31,7 +34,7 @@ export const appRouter = trpc
           votedForId: input.votedFor
         }
       });
-      return { sucess: true };
+      return { sucess: true, vote: voteInDb };
     }
   });
 

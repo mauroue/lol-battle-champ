@@ -1,38 +1,50 @@
-import type { NextPage } from 'next';
-import { inferQueryResponse } from './api/trpc/[trpc]';
-import React from 'react';
-import { getVoteOptions } from '../utils/getRandomChamp';
 import { trpc } from '../utils/trpc';
+import React from 'react';
+import { inferQueryResponse } from './api/trpc/[trpc]';
 
 import Image from 'next/image';
+import { usePlausible } from 'next-plausible';
 
-const Home: NextPage = () => {
-  const [hasMounted, setHasMounted] = React.useState(false);
-  const [ids, setIds] = React.useState(() => getVoteOptions());
-
-  const [first, second] = ids;
-
-  const firstChamp = trpc.useQuery(['get-champ-by-id', { id: first }]);
-  const secondChamp = trpc.useQuery(['get-champ-by-id', { id: second }]);
+export default function Home() {
+  // const [hasMounted, setHasMounted] = React.useState(false);
+  const {
+    data: championPair,
+    refetch,
+    isLoading
+  } = trpc.useQuery(['get-champ-pair'], {
+    refetchInterval: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false
+  });
 
   const voteMutation = trpc.useMutation(['cast-vote']);
+  const plausible = usePlausible();
 
-  const voteChamp = (selected?: number) => {
-    if (!selected) return;
-    if (selected === first) {
-      voteMutation.mutate({ votedFor: first, votedAgainst: second });
+  const voteWinner = (selected: number) => {
+    if (!championPair) return;
+
+    if (selected === championPair.firstChampion.id) {
+      voteMutation.mutate({
+        votedFor: championPair.firstChampion.id,
+        votedAgainst: championPair.secondChampion.id
+      });
     } else {
-      voteMutation.mutate({ votedFor: second, votedAgainst: first });
+      voteMutation.mutate({
+        votedFor: championPair.secondChampion.id,
+        votedAgainst: championPair.firstChampion.id
+      });
     }
-    setIds(getVoteOptions());
+    plausible('cast-vote');
+    refetch();
   };
 
-  React.useEffect(() => {
-    setHasMounted(true);
-  }, []);
+  // React.useEffect(() => {
+  //   setHasMounted(true);
+  // }, []);
 
-  if (!hasMounted) return null;
-  if (!firstChamp || !secondChamp) return null;
+  // if (!hasMounted) return null;
+  const fetchingNext = voteMutation.isLoading || isLoading;
+  if (!championPair) return null;
 
   return (
     <>
@@ -41,13 +53,15 @@ const Home: NextPage = () => {
         <div className="p-6"></div>
         <div className="p-6 flex justify-between items-center max-w-2xl">
           <ChampionCard
-            champion={firstChamp.data}
-            vote={() => voteChamp(first)}
+            champion={championPair.firstChampion}
+            vote={() => voteWinner(championPair.firstChampion.id)}
+            disabled={fetchingNext}
           />
-          <div className="p-8">vs</div>
+          <div className="p-8">{'vs'}</div>
           <ChampionCard
-            champion={secondChamp.data}
-            vote={() => voteChamp(second)}
+            champion={championPair?.secondChampion}
+            vote={() => voteWinner(championPair.secondChampion.id)}
+            disabled={fetchingNext}
           />
         </div>
       </h1>
@@ -56,26 +70,25 @@ const Home: NextPage = () => {
       </div>
     </>
   );
-};
+}
 
-type ChampionFromServer = inferQueryResponse<'get-champ-by-id'>;
+type ChampionFromServer = inferQueryResponse<'get-champ-pair'>['firstChampion'];
 
 const ChampionCard: React.FC<{
-  champion?: ChampionFromServer;
+  champion: ChampionFromServer;
   vote: () => void;
+  disabled: boolean;
 }> = (props) => {
   return (
     <div className="text-center">
-      <p>{props.champion?.name}</p>
+      <p>{props.champion.name}</p>
       <Image
         width={308}
         height={560}
         onClick={() => props.vote()}
-        src={props.champion?.imgUrl}
+        src={props.champion.imgUrl}
         alt=""
       />
     </div>
   );
 };
-
-export default Home;
