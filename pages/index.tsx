@@ -52,6 +52,9 @@ const Home: NextPage = () => {
           />
         </div>
       </h1>
+      <div className="absolute text-center bottom-0 pb-2 w-full">
+        <a href="https://github.com/mauroue/lol-champ-battle">GitHub</a>
+      </div>
     </>
   );
 };
