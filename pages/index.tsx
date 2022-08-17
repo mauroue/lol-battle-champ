@@ -1,8 +1,10 @@
 import type { NextPage } from 'next';
-import DATA from '../utils/data.json';
+import { inferQueryResponse } from './api/trpc/[trpc]';
 import React from 'react';
 import { getVoteOptions } from '../utils/getRandomChamp';
 import { trpc } from '../utils/trpc';
+
+import Image from 'next/image';
 
 const url = 'http://ddragon.leagueoflegends.com/cdn/img/champion/loading/';
 
@@ -33,34 +35,44 @@ const Home: NextPage = () => {
 
   if (!hasMounted) return null;
 
-  if (firstChamp.isLoading && secondChamp.isLoading) return null;
-
   return (
     <>
       <h1 className="h-screen w-screen flex flex-col items-center justify-center">
         <div className="text-2xl text-center">Who wins?</div>
         <div className="p-6"></div>
         <div className="border rounded p-6 flex justify-between items-center max-w-2xl">
-          <div className="text-center">
-            <p>{firstChamp.data?.name}</p>
-            <img
-              onClick={() => voteChamp(firstChamp.data?.id)}
-              src={url + firstChamp.data?.alias + '_0.jpg'}
-              alt=""
-            />
-          </div>
+          <ChampionCard
+            champion={firstChamp.data}
+            vote={() => voteChamp(first)}
+          />
           <div className="p-8">vs</div>
-          <div className="text-center">
-            {secondChamp.data?.name}
-            <img
-              onClick={() => voteChamp(secondChamp.data?.id)}
-              src={url + secondChamp.data?.alias + '_0.jpg'}
-              alt=""
-            />
-          </div>
+          <ChampionCard
+            champion={secondChamp.data}
+            vote={() => voteChamp(second)}
+          />
         </div>
       </h1>
     </>
+  );
+};
+
+type ChampionFromServer = inferQueryResponse<'get-champ-by-id'>;
+
+const ChampionCard: React.FC<{
+  champion: ChampionFromServer;
+  vote: () => void;
+}> = (props) => {
+  return (
+    <div className="text-center">
+      <p>{props.champion?.name}</p>
+      <Image
+        width={308}
+        height={560}
+        onClick={() => props.vote()}
+        src={url + props.champion?.alias + '_0.jpg'}
+        alt=""
+      />
+    </div>
   );
 };
 
