@@ -1,4 +1,4 @@
-[
+export const DATA = [
   {
     "id": -1,
     "name": "None",

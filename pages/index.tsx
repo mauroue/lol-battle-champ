@@ -6,8 +6,6 @@ import { trpc } from '../utils/trpc';
 
 import Image from 'next/image';
 
-const url = 'http://ddragon.leagueoflegends.com/cdn/img/champion/loading/';
-
 const Home: NextPage = () => {
   const [hasMounted, setHasMounted] = React.useState(false);
   const [ids, setIds] = React.useState(() => getVoteOptions());
@@ -34,6 +32,7 @@ const Home: NextPage = () => {
   }, []);
 
   if (!hasMounted) return null;
+  if (!firstChamp || !secondChamp) return null;
 
   return (
     <>
@@ -62,7 +61,7 @@ const Home: NextPage = () => {
 type ChampionFromServer = inferQueryResponse<'get-champ-by-id'>;
 
 const ChampionCard: React.FC<{
-  champion: ChampionFromServer;
+  champion?: ChampionFromServer;
   vote: () => void;
 }> = (props) => {
   return (
@@ -72,7 +71,7 @@ const ChampionCard: React.FC<{
         width={308}
         height={560}
         onClick={() => props.vote()}
-        src={url + props.champion?.alias + '_0.jpg'}
+        src={props.champion?.imgUrl}
         alt=""
       />
     </div>

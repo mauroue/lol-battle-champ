@@ -1,4 +1,3 @@
-import data from '../../utils/data.json';
 import * as trpc from '@trpc/server';
 import { z } from 'zod';
 import { prisma } from '../utils/prisma';
@@ -10,8 +9,14 @@ export const appRouter = trpc
       id: z.number()
     }),
     async resolve({ input }) {
-      const championData = data.find((champion) => champion.id === input.id);
-      return championData;
+      const champion = await prisma.champion.findFirst({
+        where: { id: input.id }
+      });
+
+      if (!champion) {
+        throw new Error('champion not found');
+      }
+      return champion;
     }
   })
   .mutation('cast-vote', {

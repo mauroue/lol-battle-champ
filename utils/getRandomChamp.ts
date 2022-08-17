@@ -1,4 +1,4 @@
-import DATA from "./data.json";
+import { DATA } from './data.js';
 
 export const getVoteOptions = () => {
   const leftId = getRandomChampById();
