@@ -33,9 +33,14 @@ const ChampionListing: React.FC<{
 }> = (props) => {
   return (
     <div className="flex justify-center">
-      <div className="flex border-b p-3 w-60">
+      <div className="flex border-b p-3 w-80">
         <div className="p-5 text-xl">{props.rank}</div>
-        <Image width={77} height={140} src={props.champion.imgUrl} alt="" />
+        <Image
+          width={77}
+          height={140}
+          layout="fixed"
+          src={props.champion.imgUrl}
+        />
         <div className="p-2 text-lg">
           <div className="">{props.champion.name}</div>
           <div>{winRate(props.champion).toFixed(2) + '%'}</div>

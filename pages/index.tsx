@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { usePlausible } from 'next-plausible';
 
 export default function Home() {
-  // const [hasMounted, setHasMounted] = React.useState(false);
   const {
     data: championPair,
     refetch,
@@ -39,11 +38,6 @@ export default function Home() {
     refetch();
   };
 
-  // React.useEffect(() => {
-  //   setHasMounted(true);
-  // }, []);
-
-  // if (!hasMounted) return null;
   const fetchingNext = voteMutation.isLoading || isLoading;
   if (!championPair) return null;
 
