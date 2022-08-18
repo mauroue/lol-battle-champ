@@ -39,7 +39,6 @@ export default function Home() {
   };
 
   const fetchingNext = voteMutation.isLoading || isLoading;
-  if (!championPair) return null;
 
   return (
     <>
@@ -55,7 +54,7 @@ export default function Home() {
             />
             <div className="p-8">{'vs'}</div>
             <ChampionCard
-              champion={championPair.secondChampion}
+              champion={championPair?.secondChampion}
               vote={() => voteWinner(championPair.secondChampion.id)}
               disabled={fetchingNext}
             />
@@ -63,11 +62,10 @@ export default function Home() {
         )}
         {!championPair && <img src="loading.svg" className="w-48"></img>}
       </h1>
-      pages/loading.svg
       <div className="absolute text-center bottom-0 pb-2 w-full">
         <Link
           className="p-4"
-          href="https://github.com/mauroue/lol-champ-battle"
+          href="https://github.com/mauroue/lol-battle-champ"
         >
           GitHub
         </Link>
@@ -86,14 +84,20 @@ const ChampionCard: React.FC<{
   disabled: boolean;
 }> = (props) => {
   return (
-    <div className="text-center">
+    <div
+      className={`flex flex-col items-center transition-opacity ${
+        props.disabled && 'opacity-0'
+      }`}
+      key={props.champion.id}
+    >
+      <h1>{props.disabled}</h1>
       <p className="py-4">{props.champion.name}</p>
       <Image
         width={308}
         height={560}
         onClick={() => props.vote()}
         src={props.champion.imgUrl}
-        alt=""
+        className="animate-fade-in"
       />
     </div>
   );
