@@ -43,7 +43,7 @@ const ChampionListing: React.FC<{
         />
         <div className="p-2 text-lg">
           <div className="">{props.champion.name}</div>
-          <div>{winRate(props.champion).toFixed(2) + '%'}</div>
+          <div>{'Win%: ' + winRate(props.champion).toFixed(2) + '%'}</div>
         </div>
       </div>
     </div>

@@ -46,20 +46,24 @@ export default function Home() {
       <h1 className="h-screen w-screen flex flex-col items-center justify-center">
         <div className="text-2xl text-center">Who wins?</div>
         <div className="p-6"></div>
-        <div className="p-6 flex justify-between items-center max-w-2xl">
-          <ChampionCard
-            champion={championPair.firstChampion}
-            vote={() => voteWinner(championPair.firstChampion.id)}
-            disabled={fetchingNext}
-          />
-          <div className="p-8">{'vs'}</div>
-          <ChampionCard
-            champion={championPair?.secondChampion}
-            vote={() => voteWinner(championPair.secondChampion.id)}
-            disabled={fetchingNext}
-          />
-        </div>
+        {championPair && (
+          <div className="p-6 flex justify-between items-center max-w-2xl">
+            <ChampionCard
+              champion={championPair.firstChampion}
+              vote={() => voteWinner(championPair.firstChampion.id)}
+              disabled={fetchingNext}
+            />
+            <div className="p-8">{'vs'}</div>
+            <ChampionCard
+              champion={championPair.secondChampion}
+              vote={() => voteWinner(championPair.secondChampion.id)}
+              disabled={fetchingNext}
+            />
+          </div>
+        )}
+        {!championPair && <img src="loading.svg" className="w-48"></img>}
       </h1>
+      pages/loading.svg
       <div className="absolute text-center bottom-0 pb-2 w-full">
         <Link
           className="p-4"
