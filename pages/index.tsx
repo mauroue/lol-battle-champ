@@ -3,6 +3,7 @@ import React from 'react';
 import { inferQueryResponse } from './api/trpc/[trpc]';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { usePlausible } from 'next-plausible';
 
 export default function Home() {
@@ -66,7 +67,14 @@ export default function Home() {
         </div>
       </h1>
       <div className="absolute text-center bottom-0 pb-2 w-full">
-        <a href="https://github.com/mauroue/lol-champ-battle">GitHub</a>
+        <Link
+          className="p-4"
+          href="https://github.com/mauroue/lol-champ-battle"
+        >
+          GitHub
+        </Link>
+        <span className="px-4">{'-'}</span>
+        <Link href="/results">Results</Link>
       </div>
     </>
   );
