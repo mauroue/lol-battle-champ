@@ -89,7 +89,7 @@ const ChampionCard: React.FC<{
 }> = (props) => {
   return (
     <div className="text-center">
-      <p>{props.champion.name}</p>
+      <p className="py-4">{props.champion.name}</p>
       <Image
         width={308}
         height={560}

@@ -1,5 +1,4 @@
 import { GetServerSideProps } from 'next';
-import { AsyncParseReturnType } from 'zod';
 import { prisma } from '../backend/utils/prisma';
 import { AsyncReturnType } from '../utils/ts-infer-type';
 
