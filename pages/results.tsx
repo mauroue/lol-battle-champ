@@ -84,5 +84,5 @@ export default ResultsPage;
 
 export const getStaticProps: GetServerSideProps = async () => {
   const championsOrdered = await getChampionInOrder();
-  return { props: { champion: championsOrdered }, revalidate: 300 };
+  return { props: { champion: championsOrdered }, revalidate: 30 };
 };
